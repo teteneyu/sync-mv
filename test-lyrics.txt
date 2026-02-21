@@ -1,0 +1,11 @@
+[Intro]
+Welcome to the song
+This is the intro section
+
+[Verse 1]
+Here comes the first verse
+It's a really good verse
+
+[Chorus]
+And now we hit the chorus
+The best part of the song
