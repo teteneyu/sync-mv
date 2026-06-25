@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a2e;
+  --background: #eef1f4;
+  --foreground: #17202a;
 }
 
 @theme inline {
@@ -10,38 +10,240 @@
   --color-foreground: var(--foreground);
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), "Yu Gothic", "Meiryo", sans-serif;
   overflow: hidden;
 }
 
-/* React Flow カスタムスタイル */
-.react-flow__node {
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-.react-flow__node.selected {
-  border: none !important;
-  box-shadow: none !important;
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
-.react-flow__handle {
-  opacity: 0;
-  transition: opacity 0.2s ease;
+.tool-button,
+.tool-button-primary,
+.mini-button,
+.mini-button-active,
+.pill,
+.pill-active {
+  border-radius: 6px;
+  border: 1px solid #c9d0d8;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
-.react-flow__node:hover .react-flow__handle {
-  opacity: 1;
+.tool-button,
+.tool-button-primary {
+  min-height: 36px;
+  padding: 0 12px;
 }
 
-/* スクロールバー */
+.tool-button {
+  background: #ffffff;
+  color: #27323f;
+}
+
+.tool-button:hover:not(:disabled) {
+  background: #eef7f3;
+  border-color: #75aa99;
+}
+
+.tool-button-primary {
+  background: #2f7d68;
+  border-color: #2f7d68;
+  color: #ffffff;
+}
+
+.tool-button-primary:hover:not(:disabled) {
+  background: #25614f;
+  border-color: #25614f;
+}
+
+.mini-button,
+.mini-button-active,
+.pill,
+.pill-active {
+  min-height: 28px;
+  padding: 0 9px;
+}
+
+.mini-button,
+.pill {
+  background: #ffffff;
+  color: #52606d;
+}
+
+.mini-button-active,
+.pill-active {
+  background: #dfeee8;
+  border-color: #75aa99;
+  color: #25614f;
+}
+
+.block-card {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid #d8dde3;
+  border-left-width: 6px;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(23, 32, 42, 0.06);
+}
+
+.cut-card {
+  border-left-color: #7b8794;
+}
+
+.scene-card {
+  border-left-color: #2f7d68;
+  background: #fbfdfc;
+}
+
+.active-card {
+  outline: 2px solid #75aa99;
+  outline-offset: 1px;
+}
+
+.selected-card {
+  background: #f6fbf9;
+}
+
+.image-slot {
+  position: relative;
+  display: flex;
+  width: 150px;
+  height: 84px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #d8dde3;
+  border-radius: 6px;
+  background: #eef1f4;
+  color: #66717e;
+  font-size: 12px;
+}
+
+.image-slot img,
+.thumb-slot img,
+.reference-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fallback-image {
+  opacity: 0.58;
+}
+
+.image-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  border-radius: 4px;
+  background: rgba(23, 32, 42, 0.72);
+  color: #ffffff;
+  font-size: 11px;
+  padding: 2px 5px;
+}
+
+.thumb-slot {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #d8dde3;
+  border-radius: 5px;
+  background: #f8fafb;
+  color: #52606d;
+  font-size: 11px;
+}
+
+.cue-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 82px 84px minmax(160px, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+
+.active-cue .cue-id,
+.active-cue .time-input,
+.active-cue .lyrics-input {
+  border-color: #75aa99;
+  background: #f6fbf9;
+}
+
+.cue-id,
+.time-input,
+.lyrics-input {
+  height: 32px;
+  border: 1px solid #d8dde3;
+  border-radius: 5px;
+  background: #ffffff;
+  padding: 0 8px;
+  color: #27323f;
+  font-size: 12px;
+  outline: none;
+}
+
+.cue-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-align: left;
+}
+
+.time-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.lyrics-input {
+  min-width: 0;
+}
+
+.cue-warning {
+  grid-column: 2 / -1;
+  color: #a8482f;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.reference-preview {
+  display: flex;
+  width: 52px;
+  height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #d8dde3;
+  border-radius: 5px;
+  background: #eef1f4;
+  color: #52606d;
+  font-size: 11px;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -49,42 +251,67 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
+  background: #b8c1cb;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #8d99a6;
 }
 
-/* ノードのテキストエリアをドラッグ無効化 */
-.nodrag {
-  cursor: text !important;
+.app-shell {
+  grid-template-columns: 300px minmax(0, 1fr) 320px;
 }
 
-/* コントロールのスタイル */
-.react-flow__controls button {
-  border: 1px solid #e5e7eb !important;
-  border-radius: 8px !important;
-  background: white !important;
-  color: #6b7280 !important;
-  margin: 2px !important;
-}
-
-.react-flow__controls button:hover {
-  background: #f3f4f6 !important;
-  color: #374151 !important;
-}
-
-/* アニメーション */
-@keyframes pulse-soft {
-
-  0%,
-  100% {
-    opacity: 1;
+@media (max-width: 1120px) {
+  body {
+    overflow: auto;
   }
 
-  50% {
-    opacity: 0.7;
+  .app-shell {
+    display: flex;
+    height: auto;
+    min-height: calc(100vh - 64px);
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .app-shell > aside,
+  .app-shell > section {
+    min-height: auto;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .app-shell > section {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 900px) {
+  header {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-block: 10px;
+  }
+
+  .block-card {
+    flex-direction: column;
+  }
+
+  .block-card > div,
+  .image-slot {
+    width: 100%;
+  }
+
+  .image-slot {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .cue-row {
+    grid-template-columns: 82px minmax(78px, 92px) minmax(0, 1fr);
   }
 }

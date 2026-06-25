@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useAudioPlayer() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -10,102 +10,91 @@ export function useAudioPlayer() {
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
     const [fileName, setFileName] = useState<string | null>(null);
     const [isLooping, setIsLooping] = useState(false);
-    const animationFrameRef = useRef<number | undefined>(undefined);
 
-    const updateTime = useCallback(() => {
-        if (audioRef.current) {
-            setCurrentTime(audioRef.current.currentTime);
-            animationFrameRef.current = requestAnimationFrame(updateTime);
+    const ensureAudio = useCallback(() => {
+        if (!audioRef.current) {
+            audioRef.current = new Audio();
         }
+        return audioRef.current;
     }, []);
 
     const loadAudio = useCallback(
         (file: File) => {
-            // 古いURLを解放
-            if (audioUrl) {
-                URL.revokeObjectURL(audioUrl);
-            }
+            if (audioUrl) URL.revokeObjectURL(audioUrl);
 
             const url = URL.createObjectURL(file);
-            setAudioUrl(url);
-            setFileName(file.name);
-
-            if (!audioRef.current) {
-                audioRef.current = new Audio();
-            }
-
-            const audio = audioRef.current;
+            const audio = ensureAudio();
+            audio.pause();
             audio.src = url;
             audio.loop = isLooping;
+            audio.onloadedmetadata = () => {
+                setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+                setCurrentTime(0);
+            };
+            audio.onended = () => setIsPlaying(false);
+            audio.ontimeupdate = () => setCurrentTime(audio.currentTime);
 
-            audio.addEventListener('loadedmetadata', () => {
-                setDuration(audio.duration);
-            });
-
-            audio.addEventListener('ended', () => {
-                setIsPlaying(false);
-                if (animationFrameRef.current) {
-                    cancelAnimationFrame(animationFrameRef.current);
-                }
-            });
+            setAudioUrl(url);
+            setFileName(file.name);
+            setIsPlaying(false);
         },
-        [audioUrl, isLooping]
+        [audioUrl, ensureAudio, isLooping]
     );
 
     const toggleLoop = useCallback(() => {
         setIsLooping((prev) => {
             const next = !prev;
-            if (audioRef.current) {
-                audioRef.current.loop = next;
-            }
+            if (audioRef.current) audioRef.current.loop = next;
             return next;
         });
     }, []);
 
     const togglePlay = useCallback(() => {
-        if (!audioRef.current) return;
+        const audio = audioRef.current;
+        if (!audio) return;
 
         if (isPlaying) {
-            audioRef.current.pause();
-            if (animationFrameRef.current) {
-                cancelAnimationFrame(animationFrameRef.current);
-            }
+            audio.pause();
             setIsPlaying(false);
-        } else {
-            audioRef.current.play();
-            animationFrameRef.current = requestAnimationFrame(updateTime);
-            setIsPlaying(true);
+            return;
         }
-    }, [isPlaying, updateTime]);
+
+        void audio.play()
+            .then(() => setIsPlaying(true))
+            .catch(() => setIsPlaying(false));
+    }, [isPlaying]);
 
     const seekTo = useCallback(
         (seconds: number) => {
-            if (!audioRef.current) return;
-            audioRef.current.currentTime = Math.max(
-                0,
-                Math.min(seconds, duration)
-            );
-            setCurrentTime(audioRef.current.currentTime);
+            const audio = audioRef.current;
+            if (!audio) return;
+            const nextTime = Math.max(0, Math.min(seconds, duration || 0));
+            audio.currentTime = nextTime;
+            setCurrentTime(nextTime);
         },
         [duration]
     );
 
     const seekRelative = useCallback(
         (delta: number) => {
-            if (!audioRef.current) return;
-            seekTo(audioRef.current.currentTime + delta);
+            const audio = audioRef.current;
+            if (!audio) return;
+            seekTo(audio.currentTime + delta);
         },
         [seekTo]
     );
 
     useEffect(() => {
+        if (!isPlaying) return;
+        const id = window.setInterval(() => {
+            if (audioRef.current) setCurrentTime(audioRef.current.currentTime);
+        }, 80);
+        return () => window.clearInterval(id);
+    }, [isPlaying]);
+
+    useEffect(() => {
         return () => {
-            if (animationFrameRef.current) {
-                cancelAnimationFrame(animationFrameRef.current);
-            }
-            if (audioUrl) {
-                URL.revokeObjectURL(audioUrl);
-            }
+            if (audioUrl) URL.revokeObjectURL(audioUrl);
         };
     }, [audioUrl]);
 

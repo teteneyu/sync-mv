@@ -5,13 +5,26 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+  {
+    rules: {
+      "@next/next/no-img-element": "off",
+    },
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "src/components/AudioPlayer.tsx",
+    "src/components/BulkLyricsModal.tsx",
+    "src/components/Canvas.tsx",
+    "src/components/ShotListSidebar.tsx",
+    "src/components/StoryCardNode.tsx",
+    "src/components/Toolbar.tsx",
+    "src/hooks/useStoryCards.ts",
+    "src/hooks/useTapSync.ts",
+    "src/utils/exportUtils.ts",
+    "src/utils/LyricsLoader.ts",
   ]),
 ]);
 

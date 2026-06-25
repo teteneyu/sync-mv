@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MV Storyboard - ストーリーボード制作ツール",
-  description: "MV制作のためのストーリーボード制作・タイミング調整アプリ",
+  title: "Sync MV | AIと思考を同期する",
+  description: "歌詞、タイミング、意図、リファレンス、AI相談メモを同期するMV制作台帳",
 };
 
 export default function RootLayout({
@@ -13,13 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" suppressHydrationWarning>
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="antialiased" style={{ fontFamily: "'Zen Maru Gothic', sans-serif" }} suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         {children}
       </body>
     </html>
